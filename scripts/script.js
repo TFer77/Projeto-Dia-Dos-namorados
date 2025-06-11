@@ -1,15 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Adicionado para a chuva de corações fixa
+    const EFEITO_CORACOES_ATIVADO = true;
+
     // --- CONTROLES DE VÍDEO ---
     const video = document.getElementById("video-surpresa");
     if (video) {
         const videoObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    video.play().catch(e => {});
-                } else {
-                    video.pause();
-                }
-            });
+            entries.forEach(entry => entry.isIntersecting ? video.play().catch(e => {}) : video.pause());
         }, { threshold: 0.5 });
         videoObserver.observe(video);
     }
@@ -24,31 +21,28 @@ document.addEventListener("DOMContentLoaded", () => {
     
     let musicaPodeTocar = false;
 
+    // Inicia a música com o clique no botão
     botaoMusica.addEventListener("click", () => {
         musicaPodeTocar = true;
         botaoMusica.style.display = 'none';
 
-        // Toca o primeiro áudio normalmente
-        audio1.play().catch(e => { console.error("Erro ao iniciar audio 1:", e) });
+        // Toca o primeiro áudio
+        audio1.play().catch(e => console.error("Erro ao iniciar audio 1:", e));
 
-        // O TRUQUE FINAL: Toca e pausa o segundo áudio imediatamente.
-        // Isso "registra" a permissão do usuário para ele também.
-        // Ele precisa estar sem som (muted) para isso funcionar sem problemas.
+        // O TRUQUE para pré-aprovar o segundo áudio no navegador
         audio2.muted = true;
         const promise = audio2.play();
         if (promise !== undefined) {
             promise.then(_ => {
-                // Autoplay started! Pausamos imediatamente.
                 audio2.pause();
-                audio2.muted = false; // Tiramos o mudo para quando for tocar de verdade
+                audio2.muted = false;
             }).catch(error => {
-                // Autoplay was prevented.
-                console.error("Preparação do audio 2 falhou:", error);
                 audio2.muted = false;
             });
         }
     });
 
+    // Observador que vigia os capítulos para trocar a música
     const audioObserver = new IntersectionObserver((entries) => {
         if (!musicaPodeTocar) return;
 
@@ -72,23 +66,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, { threshold: 0.4 });
 
-    capitulos.forEach(capitulo => {
-        audioObserver.observe(capitulo);
-    });
+    // Pede para o observador vigiar todos os capítulos
+    if(capitulos.length > 0) {
+        capitulos.forEach(capitulo => {
+            audioObserver.observe(capitulo);
+        });
+    }
 
-    // --- EFEITO DE CORAÇÕES CAINDO ---
-    const containerCoracoes = document.querySelector(".container");
-    if (containerCoracoes) {
+    // --- EFEITO DE CHUVA DE CORAÇÕES ---
+    if(EFEITO_CORACOES_ATIVADO) {
+        const containerCoracoes = document.createElement('div');
+        containerCoracoes.id = 'efeito-chuva-de-coracoes';
+        document.body.appendChild(containerCoracoes);
+
         setInterval(() => {
             const coracao = document.createElement("div");
             coracao.classList.add("coracao");
             coracao.innerText = "💙";
-            coracao.style.left = Math.random() * 100 + "%";
-            coracao.style.animationDuration = (Math.random() * 3 + 2) + "s";
+            coracao.style.left = Math.random() * 100 + "vw"; // vw = viewport width
+            coracao.style.animationDuration = (Math.random() * 3 + 3) + "s"; // entre 3 e 6 segundos
+            coracao.style.opacity = Math.random();
+            coracao.style.fontSize = (Math.random() * 16 + 10) + 'px'; // Tamanhos variados
             containerCoracoes.appendChild(coracao);
+
             setTimeout(() => {
                 coracao.remove();
-            }, 5000);
-        }, 300);
+            }, 6000); // Remove depois de 6 segundos
+        }, 150); // Cria um coração a cada 150ms
     }
 });
