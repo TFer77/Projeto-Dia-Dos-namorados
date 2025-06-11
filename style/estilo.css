@@ -149,9 +149,11 @@ footer p {
 /* --- IMAGENS E VÍDEO --- */
 video, .foto-principal {
     width: 100%;
-    height: auto;
+    height: auto; /* Mantemos por compatibilidade com navegadores antigos */
+    aspect-ratio: 1 / 1; /* <-- A LINHA MÁGICA ESTÁ AQUI */
     border-radius: 10px;
-    margin-top: 10px;
+    margin-top: 15px;
+    background-color: #e0e0e0; /* Bônus: um fundo cinza enquanto a imagem carrega */
 }
 
 /* --- BOTÃO DE MÚSICA --- */
