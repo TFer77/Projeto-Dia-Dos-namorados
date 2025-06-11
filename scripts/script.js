@@ -27,7 +27,26 @@ document.addEventListener("DOMContentLoaded", () => {
     botaoMusica.addEventListener("click", () => {
         musicaPodeTocar = true;
         botaoMusica.style.display = 'none';
-        audio1.play().catch(e => {});
+
+        // Toca o primeiro áudio normalmente
+        audio1.play().catch(e => { console.error("Erro ao iniciar audio 1:", e) });
+
+        // O TRUQUE FINAL: Toca e pausa o segundo áudio imediatamente.
+        // Isso "registra" a permissão do usuário para ele também.
+        // Ele precisa estar sem som (muted) para isso funcionar sem problemas.
+        audio2.muted = true;
+        const promise = audio2.play();
+        if (promise !== undefined) {
+            promise.then(_ => {
+                // Autoplay started! Pausamos imediatamente.
+                audio2.pause();
+                audio2.muted = false; // Tiramos o mudo para quando for tocar de verdade
+            }).catch(error => {
+                // Autoplay was prevented.
+                console.error("Preparação do audio 2 falhou:", error);
+                audio2.muted = false;
+            });
+        }
     });
 
     const audioObserver = new IntersectionObserver((entries) => {
