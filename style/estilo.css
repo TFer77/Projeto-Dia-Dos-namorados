@@ -254,15 +254,15 @@ button#botao-musica:hover {
     font-weight: 300;
 }
 
-/* Partícula da explosão de corações */
-.particula-coracao {
-    position: fixed;
+.particula-coracao-js {
+    position: fixed; /* Controlado pelo JS agora */
     font-size: 24px;
-    color: #ff0055;
+    color: #008cff;
     pointer-events: none;
-    animation: explodir 1.2s ease-out forwards;
-    z-index: 200; /* Fica na frente de tudo */
+    z-index: 200;
+    will-change: transform, opacity; /* Dica de performance para o navegador */
 }
+
 
 @keyframes explodir {
     0% { transform: scale(1); opacity: 1; }
