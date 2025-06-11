@@ -178,3 +178,93 @@ button#botao-musica:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
+/* --- ESTILOS PARA A SURPRESA FINAL (CAPÍTULO 6) --- */
+
+#container-surpresa-final {
+    position: relative; /* Container para a imagem e o texto sobreposto */
+    margin-top: 25px;
+    border-radius: 10px;
+    overflow: hidden; /* Garante que a imagem não vaze */
+}
+
+#imagem-surpresa-final {
+    width: 100%;
+    display: block;
+    transition: filter 1s ease-out; /* Animação suave para o desfoque */
+    cursor: pointer;
+}
+
+#imagem-surpresa-final.blur {
+    filter: blur(10px) brightness(0.8);
+}
+
+.instrucao-final {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-family: 'Pacifico', cursive;
+    font-size: 1.5em;
+    text-shadow: 0 0 10px black;
+    pointer-events: none; /* Deixa o clique passar para a imagem */
+    text-align: center;
+    width: 80%;
+}
+
+#conteudo-final-revelado {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    transition: opacity 1.5s ease-in 0.5s;
+}
+
+#conteudo-final-revelado.escondido {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.contador-container {
+    text-align: center;
+    color: white;
+    text-shadow: 0 0 8px rgba(0,0,0,0.9);
+}
+
+.contador-container .dias, .contador-container .simbolo {
+    font-family: 'Pacifico', cursive;
+    font-size: 2.5em;
+    font-weight: 700;
+    display: block;
+    line-height: 1;
+}
+
+.contador-container .simbolo {
+    font-size: 3em;
+}
+
+.contador-container .legenda {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9em;
+    font-weight: 300;
+}
+
+/* Partícula da explosão de corações */
+.particula-coracao {
+    position: fixed;
+    font-size: 24px;
+    color: #ff0055;
+    pointer-events: none;
+    animation: explodir 1.2s ease-out forwards;
+    z-index: 200; /* Fica na frente de tudo */
+}
+
+@keyframes explodir {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)) scale(0) rotate(720deg); opacity: 0; }
+}
