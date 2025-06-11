@@ -11,7 +11,7 @@ body {
     font-family: 'Roboto', sans-serif;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Alinha no topo para a rolagem começar do início */
     min-height: 100vh;
     padding: 20px;
     position: relative;
@@ -49,7 +49,7 @@ body::after {
 /* --- CONTAINER PRINCIPAL --- */
 .container {
     width: 100%;
-    max-width: 390px;
+    max-width: 420px; /* Um pouco mais largo para conforto */
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -57,8 +57,35 @@ body::after {
     text-align: center;
     position: relative; 
     z-index: 1; 
-    overflow: hidden;
 }
+
+/* --- EFEITO DE CHUVA DE CORAÇÕES --- */
+#efeito-chuva-de-coracoes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.coracao {
+    position: absolute;
+    top: -50px;
+    font-size: 24px;
+    color: #e91e63;
+    animation: cair linear forwards;
+    pointer-events: none;
+}
+
+@keyframes cair {
+    to {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
+}
+
 
 /* --- TÍTULOS E TEXTOS --- */
 h1, h2, h3, h4 {
@@ -128,6 +155,10 @@ video, .foto-principal {
 }
 
 /* --- BOTÃO DE MÚSICA --- */
+.audio-controls {
+    margin-bottom: 20px;
+}
+
 button#botao-musica {
     background: linear-gradient(45deg, #9400f7, #e91e63);
     color: white;
@@ -138,7 +169,6 @@ button#botao-musica {
     font-weight: bold;
     font-size: 1em;
     cursor: pointer;
-    margin-top: 20px;
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
@@ -146,22 +176,4 @@ button#botao-musica {
 button#botao-musica:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-}
-
-/* --- ANIMAÇÃO DOS CORAÇÕES CAINDO --- */
-.coracao {
-    position: absolute;
-    top: -50px;
-    font-size: 24px;
-    color: #e91e63;
-    animation: cair linear forwards;
-    z-index: 2;
-    pointer-events: none;
-}
-
-@keyframes cair {
-    to {
-        transform: translateY(110vh);
-        opacity: 0;
-    }
 }
