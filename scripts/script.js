@@ -1,84 +1,82 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("--- SCRIPT DEDO-DURO INICIADO ---");
 
-    const audio1 = document.getElementById("audio-parte1");
-    const audio2 = document.getElementById("audio-parte2");
+    // --- FEATURE 1: VÍDEO COM AUTOPLAY AO ROLAR ---
+    const video = document.getElementById("video-surpresa");
+    if (video) {
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    video.play().catch(e => {});
+                } else {
+                    video.pause();
+                }
+            });
+        }, { threshold: 0.5 });
+        videoObserver.observe(video);
+    }
+
+    // --- FEATURE 2: TROCA DE MÚSICA COM PLAYER ÚNICO (A VERSÃO QUE FUNCIONA) ---
+    const player = document.getElementById("player");
     const botaoMusica = document.getElementById("botao-musica");
     const capitulos = document.querySelectorAll(".capitulo");
 
-    // VERIFICAÇÃO DOS ARQUIVOS DE ÁUDIO
-    if (!audio1) {
-        console.error("ERRO CRÍTICO: Elemento de áudio com id 'audio-parte1' NÃO ENCONTRADO.");
-    } else {
-        console.log("Elemento de áudio 1 encontrado.", audio1);
-        audio1.addEventListener('canplaythrough', () => console.log('%c✅ Áudio 1 PRONTO PARA TOCAR.', 'color: lightgreen; font-weight: bold;'));
-        audio1.addEventListener('error', () => console.error('%c❌ ERRO AO CARREGAR ÁUDIO 1. Verifique o caminho/arquivo em src="' + audio1.src + '"', 'color: red; font-weight: bold;'));
-    }
-
-    if (!audio2) {
-        console.error("ERRO CRÍTICO: Elemento de áudio com id 'audio-parte2' NÃO ENCONTRADO.");
-    } else {
-        console.log("Elemento de áudio 2 encontrado.", audio2);
-        audio2.addEventListener('canplaythrough', () => console.log('%c✅ Áudio 2 PRONTO PARA TOCAR.', 'color: lightgreen; font-weight: bold;'));
-        audio2.addEventListener('error', () => console.error('%c❌ ERRO AO CARREGAR ÁUDIO 2. Verifique o caminho/arquivo em src="' + audio2.src + '"', 'color: red; font-weight: bold;'));
-    }
-
-    if (capitulos.length === 0) {
-        console.warn("AVISO: Nenhum capítulo com a classe '.capitulo' foi encontrado para observar.");
-    } else {
-        console.log(`Encontrados ${capitulos.length} capítulos para observar.`);
-    }
-
-    let musicaPodeTocar = false;
+    const musicaParte1 = "audio/Matue-AnosLuz.mp3";
+    const musicaParte2 = "audio/Lisboa.mp3";
+    
+    let musicaIniciada = false;
+    let musicaAtual = musicaParte1;
 
     botaoMusica.addEventListener("click", () => {
-        musicaPodeTocar = true;
+        musicaIniciada = true;
         botaoMusica.style.display = 'none';
-        console.log("Botão clicado. Tentando tocar Áudio 1.");
-        audio1.play().catch(e => console.error("Erro no play() inicial do Áudio 1:", e));
-
-        // Truque de pré-aprovação
-        audio2.muted = true;
-        const promise = audio2.play();
-        if (promise !== undefined) {
-            promise.then(_ => {
-                audio2.pause();
-                audio2.muted = false;
-                console.log("Áudio 2 pré-aprovado pelo navegador.");
-            }).catch(error => {
-                audio2.muted = false;
-                console.error("Falha na pré-aprovação do Áudio 2. Isso pode ser um problema.", error);
-            });
-        }
+        player.play().catch(e => console.error("Erro ao iniciar o player:", e));
     });
 
     const audioObserver = new IntersectionObserver((entries) => {
-        if (!musicaPodeTocar) return;
+        if (!musicaIniciada) return;
 
-        const capitulosVisiveis = entries.filter(entry => entry.isIntersecting);
-        if (capitulosVisiveis.length > 0) {
-            const capituloAtivo = capitulosVisiveis[capitulosVisiveis.length - 1];
-            const chapterId = capituloAtivo.target.id;
+        const capituloVisivel = entries.find(entry => entry.isIntersecting);
+        if (!capituloVisivel) return;
 
-            console.log(`Capítulo ativo detectado: ${chapterId}`);
+        const chapterId = capituloVisivel.target.id;
+        let proximaMusica = null;
 
-            if (['prologo', 'capitulo1', 'capitulo2', 'capitulo3'].includes(chapterId)) {
-                if (audio1.paused) {
-                    console.log("Trocando para Áudio 1...");
-                    audio2.pause();
-                    audio1.play().catch(e => {});
-                }
-            } else if (['capitulo4', 'capitulo5'].includes(chapterId)) {
-                if (audio2.paused) {
-                    console.log("Trocando para Áudio 2...");
-                    audio1.pause();
-                    audio2.play().catch(e => {});
-                }
-            }
+        if (['prologo', 'capitulo1', 'capitulo2', 'capitulo3'].includes(chapterId)) {
+            proximaMusica = musicaParte1;
+        } else if (['capitulo4', 'capitulo5'].includes(chapterId)) {
+            proximaMusica = musicaParte2;
         }
-    }, { threshold: 0.4 });
 
-    capitulos.forEach(capitulo => {
-        audioObserver.observe(capitulo);
-    });
+        if (proximaMusica && proximaMusica !== musicaAtual) {
+            musicaAtual = proximaMusica;
+            player.src = musicaAtual;
+            player.play().catch(e => console.error("Erro ao trocar de música:", e));
+        }
+    }, { threshold: 0.6 });
+
+    if (capitulos.length > 0) {
+        capitulos.forEach(capitulo => {
+            audioObserver.observe(capitulo);
+        });
+    }
+
+    // --- FEATURE 3: CHUVA DE CORAÇÕES FIXA NA TELA ---
+    const containerCoracoes = document.getElementById("efeito-chuva-de-coracoes");
+    if (containerCoracoes) {
+        setInterval(() => {
+            const coracao = document.createElement("div");
+            coracao.classList.add("coracao");
+            coracao.innerText = "💙";
+            coracao.style.left = Math.random() * 100 + "vw"; // 'vw' usa a largura da tela
+            coracao.style.animationDuration = (Math.random() * 4 + 4) + "s"; // Duração entre 4 e 8 segundos
+            coracao.style.opacity = Math.random() * 0.7 + 0.3; // Opacidade variada
+            coracao.style.fontSize = (Math.random() * 16 + 10) + 'px'; // Tamanhos variados
+            containerCoracoes.appendChild(coracao);
+
+            // Remove o coração depois que a animação acaba para não sobrecarregar
+            setTimeout(() => {
+                coracao.remove();
+            }, 8000); 
+        }, 200); // Cria um coração novo a cada 200ms
+    }
 });
