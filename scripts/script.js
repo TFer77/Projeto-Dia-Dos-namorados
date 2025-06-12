@@ -66,12 +66,25 @@ document.addEventListener("DOMContentLoaded", () => {
         scrollTimeout = setTimeout(checarCapituloAtivo, 100);
     });
 
-    // ===================================================================
+   // ===================================================================
     // FEATURE 3: CHUVA DE CORAÇÕES FIXA NA TELA
     // ===================================================================
     const containerCoracoes = document.getElementById("efeito-chuva-de-coracoes");
-    if (containerCoracoes) { /* ...código da chuva de corações aqui... */ }
-
+    if (containerCoracoes) {
+        setInterval(() => {
+            const coracao = document.createElement("div");
+            coracao.classList.add("coracao");
+            coracao.innerText = "💙";
+            coracao.style.left = Math.random() * 100 + "vw";
+            coracao.style.animationDuration = (Math.random() * 4 + 4) + "s";
+            coracao.style.opacity = Math.random() * 0.7 + 0.3;
+            coracao.style.fontSize = (Math.random() * 16 + 10) + 'px';
+            containerCoracoes.appendChild(coracao);
+            setTimeout(() => {
+                coracao.remove();
+            }, 8000);
+        }, 200);
+    }
     // ===================================================================
     // FEATURE 4: LÓGICA DA SURPRESA FINAL (CAPÍTULO 6)
     // ===================================================================
